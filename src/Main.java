@@ -88,7 +88,7 @@ import java.util.Scanner;
 		{
 			earlyGameOver = true;
 			earlyGameOverMessage = "You and the Dealer both got a 21, It's a tie!";
-			gameOnameOn = false;
+			gameOn = false;
 		}
 		else if (player.hasBlackJack())
 		{
