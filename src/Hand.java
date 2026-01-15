@@ -23,45 +23,6 @@ public class Hand
 
 	}
 
-	//Displays Cards for the Player
-	public void display()
-	{
-
-		System.out.println("Your Cards:");
-
-		for (Card card : hand)
-		{
-			System.out.printf("%-2s ", card);
-		}
-
-		System.out.println();
-		System.out.println();
-
-	}
-
-	public void hit(Card card)
-	{
-		addCard(card);
-		System.out.println("Your Total: " + getSum());
-		display();
-	}
-
-	public boolean canSplit()
-	{
-		return hand.get(0) == hand.get(1);
-
-	}
-
-	public boolean hasSplit()
-	{
-		return hasSplit;
-	}
-
-	public void setHasSplit(boolean split)
-	{
-		hasSplit = split;
-	}
-
 
 	public void addCard(Card card)
 	{
