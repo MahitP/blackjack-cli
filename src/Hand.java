@@ -4,7 +4,6 @@ public class Hand
 {
 	//hand is private but can be used in sub-classes
 	protected ArrayList<Card> hand = new ArrayList<>();
-	private boolean hasSplit = false;
 
 
 	public Hand()
