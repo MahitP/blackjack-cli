@@ -1,50 +1,90 @@
-public class Player extends Hand
+import java.util.List;
+import java.util.ArrayList;
+
+public class Player
 {
 	private Deck deck;
-	private boolean hasSplit = false;
+	List<Hand> playerHands = new ArrayList<>();;
+	int handIndex;
 
 	public Player(Deck deck)
 	{
 		this.deck = deck;
+
+		Hand startingHand = new Hand();
+		startingHand.addCards(deck.draw(), deck.draw());
+		playerHands.add(startingHand);
+
 	}
 
-	//Displays Cards for the Player
-	public void display()
+	public void addCards(Card... newCards)
 	{
-
-		System.out.println("Your Cards:");
-
-		for (Card card : hand)
+		for (Card card : newCards)
 		{
-			System.out.printf("%-2s ", card);
+			playerHands.get(handIndex).addCard(card);  // addCard handles storing the card
 		}
-
-		System.out.println();
-		System.out.println();
 
 	}
 
 	public void hit()
 	{
-		addCard(deck.draw());
-		System.out.println("Your Total: " + getSum());
-		display();
+		Hand hand = getCurrentHand();
+		hand.addCard(deck.draw());
+		System.out.println("Your Total For Hand " + handIndex + ": " + hand.getSum());
+		hand.display(false);
+
 	}
 
-	public boolean canSplit()
+
+	public void split()
 	{
-		return hand.size() == 2 && hand.get(0).getValue() == hand.get(1).getValue();
+		Hand handToSplit = playerHands.get(handIndex);
+
+		Hand hand1 = new Hand();
+		Hand hand2 = new Hand();
+
+		hand1.addCard(handToSplit.getCard(0));
+		hand1.addCard(deck.draw());
+
+		hand2.addCard(handToSplit.getCard(1));
+		hand2.addCard(deck.draw());
+
+		playerHands.set(handIndex, hand1); //replaces the handToSplit with hand1
+		playerHands.add(handIndex++, hand2); //inserts hand2 right after
 
 	}
 
-	public boolean hasSplit()
+	public int getSum()
 	{
-		return hasSplit;
+		return playerHands.get(handIndex).getSum();
 	}
 
-	public void setHasSplit(boolean split)
+	public boolean hasBust()
 	{
-		hasSplit = split;
+		return playerHands.get(handIndex).hasBust();
 	}
+
+	public boolean hasBlackJack()
+	{
+		return playerHands.get(handIndex).hasBlackJack();
+	}
+
+	public Hand getCurrentHand()
+	{
+		return playerHands.get(handIndex);
+	}
+
+
+	public boolean nextHand()
+	{
+		if(handIndex + 1 < playerHands.size()) {
+			handIndex++;
+			return true;
+		}
+		else
+			return false;
+	}
+
+
 
 }

@@ -8,16 +8,11 @@ import java.util.Scanner;
 	Player player;
 	Dealer dealer;
 
-	Hand splitHand1;
-	Hand splitHand2;
-
 	String earlyGameOverMessage = "";
 
 	boolean gameOn = true;
 	boolean hideFirstCard = true;
 	boolean earlyGameOver = false;
-	boolean canSplit = false;
-	boolean hasSplit = false;
 
 
 	 public Main()
@@ -43,17 +38,11 @@ import java.util.Scanner;
 		player = new Player(deck);
 		dealer = new Dealer(deck);
 
-		splitHand1 = new Hand();
-	 	splitHand2 = new Hand();
-
 		gameOn = true;
 		hideFirstCard = true;
 		earlyGameOver = false;
 
 		earlyGameOverMessage = "";
-
-		canSplit = false;
-		hasSplit = false;
 
 
 	}
@@ -103,7 +92,6 @@ import java.util.Scanner;
 			gameOn = false;
 		}
 
-			canSplit = player.canSplit();
 
 		System.out.println("Your Total: "+player.getSum());
 		player.display();
@@ -125,7 +113,7 @@ import java.util.Scanner;
 	}
 
 	//asks players for inputs and chooses what to do based on input
-	public void playerChoice()
+	public void playerChoice(Hand currentHand)
 	{
 		Scanner scanner = new Scanner(System.in);
 
@@ -138,11 +126,12 @@ import java.util.Scanner;
 
 		while(gameOn)
 		{
+
 			String choice = "";
 
 			while (true)
 			{
-				if(!canSplit)
+				if(true) //!canSplit
 				{
 					System.out.print("Would you like to hit or stand?: ");
 					choice = scanner.nextLine().trim().toLowerCase();
@@ -163,9 +152,9 @@ import java.util.Scanner;
 			{
 				System.out.println();
 				System.out.println("You chose to hit");
-				player.hit();
+				currentHand.hit();
 				System.out.println();
-				if(player.hasBust())
+				if(currentHand.hasBust())
 				{
 					System.out.println("You went over 21 'Busted', Game Over!");
 					System.out.println();
@@ -188,7 +177,11 @@ import java.util.Scanner;
 				System.out.println();
 				System.out.println("You chose to split: [Playing Hand 1]");
 				System.out.println();
-				//Split(cards);
+				player.split();
+
+				//for loop here
+				//ponce for loop over then dealer isplay
+				//evaluate resultd
 			}
 
 			else

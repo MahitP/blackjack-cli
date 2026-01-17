@@ -4,6 +4,7 @@ public class Hand
 {
 	//hand is private but can be used in sub-classes
 	protected ArrayList<Card> hand = new ArrayList<>();
+	private boolean hasSplit = false;
 
 
 	public Hand()
@@ -20,6 +21,52 @@ public class Hand
 			addCard(card);  // addCard handles storing the card
 		}
 
+	}
+
+	//Displays Cards for the Player
+	public void display(boolean activeHand)
+	{
+		if(activeHand)
+		{
+			System.out.println("Your Cards: (This is the Current Hand)");
+		}
+		else
+		{
+
+			System.out.println("Your Cards:");
+		}
+
+		for (Card card : hand)
+		{
+			System.out.printf("%-2s ", card);
+		}
+
+		System.out.println();
+		System.out.println();
+
+	}
+
+	public void hit(Card card)
+	{
+		addCard(card);
+		System.out.println("Your Total: " + getSum());
+		display(true);
+	}
+
+	public boolean canSplit()
+	{
+		return hand.size() == 2 && hand.get(0).getValue() == hand.get(1).getValue();
+
+	}
+
+	public boolean hasSplit()
+	{
+		return hasSplit;
+	}
+
+	public void setHasSplit(boolean split)
+	{
+		hasSplit = split;
 	}
 
 
