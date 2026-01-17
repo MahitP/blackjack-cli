@@ -17,11 +17,21 @@ public class Player
 
 	}
 
-	public void hit(int index)
+	public void addCards(Card... newCards)
 	{
-		playerHands.get(index).addCard(deck.draw());
-		System.out.println("Your Total: " + playerHands.get(index).getSum());
-		playerHands.get(index).display(false);
+		for (Card card : newCards)
+		{
+			playerHands.get(handIndex).addCard(card);  // addCard handles storing the card
+		}
+
+	}
+
+	public void hit()
+	{
+		Hand hand = getCurrentHand();
+		hand.addCard(deck.draw());
+		System.out.println("Your Total For Hand " + handIndex + ": " + hand.getSum());
+		hand.display(false);
 
 	}
 
@@ -40,8 +50,39 @@ public class Player
 		hand2.addCard(deck.draw());
 
 		playerHands.set(handIndex, hand1); //replaces the handToSplit with hand1
-		playerHands.set(handIndex, hand1); //inserts hand2 right after
+		playerHands.add(handIndex++, hand2); //inserts hand2 right after
 
+	}
+
+	public int getSum()
+	{
+		return playerHands.get(handIndex).getSum();
+	}
+
+	public boolean hasBust()
+	{
+		return playerHands.get(handIndex).hasBust();
+	}
+
+	public boolean hasBlackJack()
+	{
+		return playerHands.get(handIndex).hasBlackJack();
+	}
+
+	public Hand getCurrentHand()
+	{
+		return playerHands.get(handIndex);
+	}
+
+
+	public boolean nextHand()
+	{
+		if(handIndex + 1 < playerHands.size()) {
+			handIndex++;
+			return true;
+		}
+		else
+			return false;
 	}
 
 
