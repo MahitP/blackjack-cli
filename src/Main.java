@@ -14,9 +14,11 @@ import java.util.Scanner;
 	boolean hideFirstCard = true;
 	boolean earlyGameOver = false;
 
+	private final Scanner scanner = new Scanner(System.in);
 
-	 public Main()
+	public Main()
 	 {
+
 		 	setupGame();
 
 			IntroMessage();
@@ -43,7 +45,6 @@ import java.util.Scanner;
 		earlyGameOver = false;
 
 		earlyGameOverMessage = "";
-
 
 	}
 
@@ -113,171 +114,207 @@ import java.util.Scanner;
 	}
 
 	//asks players for inputs and chooses what to do based on input
-	public void playerChoice(Hand currentHand)
+	public void playerChoice()
 	{
-		Scanner scanner = new Scanner(System.in);
+		int playerBet = promptBetAmount(player.getTotal());
+		player.setBet(playerBet);
 
 		if(earlyGameOver)
 		{
 			System.out.println(earlyGameOverMessage);
+			if (player.hasBlackJack() && !dealer.hasBlackJack())
+				player.adjustTotal(true, 0);
+			else if (!player.hasBlackJack() && dealer.hasBlackJack())
+				player.adjustTotal(false, 0);
 			System.out.println();
+			return;
 		}
 
-
-		while(gameOn)
-		{
-
-			String choice = "";
-
-			while (true)
-			{
-				if(true) //!canSplit
-				{
-					System.out.print("Would you like to hit or stand?: ");
-					choice = scanner.nextLine().trim().toLowerCase();
-					if (choice.equals("hit") || choice.equals("h") || choice.equals("stand") || choice.equals("s")) break;
-					System.out.println("Invalid input. Please type 'hit' or 'stand'.");
-				}
-				else
-				{
-					System.out.print("You have the option to split the bets, Would you like to hit, stand or split?: ");
-					choice = scanner.nextLine().trim().toLowerCase();
-					if (choice.equals("hit") || choice.equals("h") || choice.equals("stand") || choice.equals("s") || choice.equals("split")) break;
-					System.out.println("Invalid input. Please type 'hit', 'stand' or 'split'.");
-				}
-
-			}
-
-			if(choice.equals("hit") || choice.equals("h"))
-			{
-				System.out.println();
-				System.out.println("You chose to hit");
-				currentHand.hit();
-				System.out.println();
-				if(currentHand.hasBust())
-				{
-					System.out.println("You went over 21 'Busted', Game Over!");
-					System.out.println();
-					gameOn = false;
-				}
-			}
-
-			else if(choice.equals("stand") || choice.equals("s"))
-			{
-				//Made a method for hit but not for stand (probably should copy this all into a method but i think but it's probably not needed??)
-				System.out.println();
-				System.out.println("You chose to stand");
-
-				dealerTurn(false);
-
-			}
-
-			else if(choice.equals("split"))
-			{
-				System.out.println();
-				System.out.println("You chose to split: [Playing Hand 1]");
-				System.out.println();
-				player.split();
-
-				//for loop here
-				//ponce for loop over then dealer isplay
-				//evaluate resultd
-			}
-
-			else
-				System.out.println("Invalid choice, please enter 'hit' or 'stand'");
-
-		}
-
+		playPlayerHands();
 	}
 
-
-	/*
-
-	Kinda complicated to explain
-
-	also there no two hands for dealer (only two hands for player)
-	player can win on both/one or none
-
-
-	how i want it to work:
-	two cards make two arrays
-	player plays first array
-	then play second array
-	repeat until both games are over
-	then print out the results for both
-
-	how it actually is working (or atleast currently its supposed to):
-	plays hand 1
-	get the result for hand 1 (It shows the dealers cards so basically u alr know dealers cards for hand 2 :/  )
-	plays hand 2
-	gets the results for hand 2 (dealers cards alr shown for hand 1 so yk the results before hand)
-
-
-
-
-	public void Split()
+	private int promptBetAmount(int max)
 	{
-		//says that u split
-		hasSplit = true;
+		int playerBet;
+		System.out.println("Total Money: " + player.getTotal());
 
-		//makes both the cards
-		splitHand1[0] = cards[0];
-		splitHand1[1] = deck[deckPosition++];
-
-		splitHand2[0] = cards[1];
-		splitHand2[1] = deck[deckPosition++];
-
-		//plays hand1
-		GamePlay(splitHand1);
-		playerChoice(splitHand1);
-		int hand1Sum = sum;
-		boolean hand1Bust = playerBust;
-
-		//changes the variables for hand2
-		GameOn = true;
-		playerBust = false;
-
-		System.out.println("You chose to split: [Playing Hand 2]");
-		System.out.println();
-
-		//plays hand2
-		GamePlay(splitHand2);
-		playerChoice(splitHand2);
-		int hand2Sum = sum;
-		boolean hand2Bust = playerBust;
-
-    	System.out.println("\n[Dealer's Turn]");
-		dealerTurn(true);
-
-
-		//Should print out the results after BOTH hands are finished cuz same dealer hand
-		System.out.println("\n[Results]");
-		if(hand1Bust)
+		while (true)
 		{
-			System.out.println("Hand 1: Busted");
-		}
-		else
-		{
-			System.out.println("Hand 1: " + hand1Sum + " vs Dealer: " + dealerSum + " → " + evaluateResult(hand1Sum, dealerSum));
-		}
+			System.out.print("How much would you like to bet? (1 - " + max + "): ");
+			String line = scanner.nextLine().trim();
 
-		if(hand2Bust)
-		{
-			System.out.println("Hand 2: Busted");
+			try
+			{
+				playerBet = Integer.parseInt(line);
+			}
+			catch (NumberFormatException e)
+			{
+				System.out.println("Invalid input. Please enter a whole number.");
+				continue;
+			}
+
+			if (playerBet < 1)
+			{
+				System.out.println("Bet is too low. Please enter a number higher than 0.");
+			}
+			else if (playerBet > max)
+			{
+				System.out.println("Bet is too high. Please enter a number lower than or equal to " + max + ".");
+			}
+			else
+			{
+				return playerBet;
+			}
 		}
-		else
-		{
-			System.out.println("Hand 2: " + hand2Sum + " vs Dealer: " + dealerSum + " → " + evaluateResult(hand2Sum, dealerSum));
-		}
-
-		//so you don't split again?
-		canSplit = false;
-
-
 	}
 
-	*/
+	private String promptPlayerAction(boolean canSplit)
+	{
+		while (true)
+		{
+			if (canSplit)
+			{
+				System.out.print("You have the option to split the bets, Would you like to hit, stand or split?: ");
+			}
+			else
+			{
+				System.out.print("Would you like to hit or stand?: ");
+			}
+
+			String action = scanner.nextLine().trim().toLowerCase();
+
+			if (action.equals("hit") || action.equals("h") || action.equals("stand") || action.equals("s") || (canSplit && action.equals("split")))
+			{
+				return action;
+			}
+
+			if (canSplit)
+			{
+				System.out.println("Invalid input. Please type 'hit', 'stand' or 'split'.");
+			}
+			else
+			{
+				System.out.println("Invalid input. Please type 'hit' or 'stand'.");
+			}
+		}
+	}
+
+	private void playPlayerHands()
+	{
+		player.setHandIndex(0);
+
+		do
+		{
+			playCurrentHand();
+		} while(player.nextHand());
+
+		dealerTurn();
+		evaluateHands();
+	}
+
+	private void playCurrentHand()
+	{
+		Hand hand = player.getCurrentHand();
+
+		while (!hand.hasBust())
+		{
+			player.display();
+
+			boolean canSplit = hand.canSplit();
+			String action = promptPlayerAction(canSplit);
+
+			if (action.equals("hit") || action.equals("h"))
+			{
+				System.out.println("You chose to hit");
+				System.out.println();
+				hand.addCard(deck.draw());
+				System.out.println("Your Total For " + handLabel(player.getHandIndex()) + ": " + hand.getSum());
+				player.display();
+				System.out.println();
+
+				if(hand.hasBust())
+				{
+					System.out.println(handLabel(player.getHandIndex()) + " Busted!");
+					System.out.println();
+					player.display();
+					break;
+				}
+			}
+			else if (action.equals("stand") || action.equals("s"))
+			{
+				System.out.println("You chose to stand for " + handLabel(player.getHandIndex()));
+				System.out.println();
+				break;
+			}
+			else if (action.equals("split") && canSplit)
+			{
+				player.split();
+				hand = player.getCurrentHand();
+				System.out.println("You chose to split!");
+				System.out.println();
+			}
+		}
+	}
+
+	private void evaluateHands()
+	{
+		int dealerSum = dealer.getSum();
+
+		for(int i = 0; i < player.getHands().size(); i++)
+		{
+			Hand hand = player.getHands().get(i);
+
+			if (hand.hasBust())
+			{
+				System.out.println("Result for " + handLabel(i) + ":");
+				System.out.println("Busted!");
+				player.adjustTotal(false, i);
+				System.out.println();
+				continue;
+			}
+
+			evaluateResult(i, hand.getSum(), dealerSum);
+		}
+	}
+
+	public void evaluateResult(int handIndex, int playerSum, int dealerSum)
+	{
+		System.out.println("Result for " + handLabel(handIndex) + ":");
+
+		if (dealerSum > 21)
+		{
+			System.out.println("The Dealer went over 21 'Busted', You Win!");
+			player.adjustTotal(true, handIndex);
+		}
+		else
+		{
+			if (dealerSum > playerSum)
+			{
+				System.out.println("The dealer has higher sum than you, Dealer Wins!");
+				player.adjustTotal(false, handIndex);
+			}
+			else if (dealerSum < playerSum)
+			{
+				System.out.println("You have a higher sum than the dealer, You Win!");
+				player.adjustTotal(true, handIndex);
+			}
+			else
+			{
+				System.out.println("You both have the same sum, It's a tie!");
+				player.clearHandBet(handIndex);
+			}
+		}
+
+		System.out.println();
+	}
+
+	private String handLabel(int index)
+	{
+		return player.getHands().size() > 1 ? "Hand " + index : "Your hand";
+	}
+
+
+
 
 
 	//this adds the cards at the starting of the game (2 for each)
@@ -291,67 +328,15 @@ import java.util.Scanner;
 	}
 
 
+	 public void dealerTurn()
+	 {
+		 dealer.playTurn();
+		 hideFirstCard = false;
 
+		 System.out.println("Dealer's Total: " + dealer.getSum());
+		 dealer.display(false);
 
-	public void dealerTurn(boolean playerHit)
-	{
-
-
-			//If you haven't split because you if i split it has different system.out.println() statements that display instead of this
-			if(!hasSplit)
-			{
-
-				dealer.playTurn();
-
-				if(!playerHit) //It shows this if player choose to stand and the dealersTurn() method is being called from that
-				{
-					System.out.println("Dealer's Total: "+ dealer.getSum());
-					dealer.display(false);
-					evaluateResult();
-
-
-				}
-				else  //It shows this if player choose to hit and the dealersTurn() method is being called from Hit()
-				{
-					System.out.println("Dealer's Total: [Hidden] + " + dealer.getVisibleCard());
-					dealer.display(true);
-				}
-
-			}
-
-	}
-
-	public void evaluateResult()
-	{
-
-		if(dealer.hasBust())
-		{
-			System.out.println("The Dealer went over 21 'Busted', You Win!");
-				gameOn = false;
-		}
-		else
-		{
-			if(dealer.getSum()>player.getSum())
-			{
-				System.out.println("The dealer has higher sum than you, Dealer Wins!");
-				gameOn = false;
-			}
-			else if(dealer.getSum()<player.getSum())
-			{
-				System.out.println("You have a higher sum than the dealer, You Win!");
-				gameOn = false;
-			}
-			else
-			{
-				System.out.println("You both have the same sum, It's a tie!");
-				gameOn = false;
-			}
-		}
-
-				System.out.println();
-	}
-
-
+	 }
 	public static void main(String[] args)
 	{
 		Scanner scanner = new Scanner(System.in);
@@ -360,7 +345,7 @@ import java.util.Scanner;
 		while(Playing)
 		{
 			Main app = new Main();
-			System.out.println("Press 'r' to play again! Press any other key to quit!");
+			System.out.print("Press 'r' to play again! Press any other key to quit!: ");
 			String playing = scanner.nextLine().toLowerCase();
 
 			if (!playing.equals("r"))

@@ -31,7 +31,7 @@ public class Dealer extends Hand
 
 	public int getVisibleCard()
 	{
-		if (getHandSize() < 2)
+		if (size() < 2)
 			return 0;
 
 

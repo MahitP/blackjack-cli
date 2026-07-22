@@ -1,7 +1,7 @@
 public class Card
 {
-	private int value;
-	private String suit;
+	private final int value;
+	private final String suit;
 
 	public Card(int value, String suit)
 	{
@@ -22,20 +22,20 @@ public class Card
 
 	public String toString()
 	{
-		if(value == 1)
-			return "[" + suit + "A" + "]";
-		if(value == 11)
-			return "[" + suit + "J" + "]";
-		if(value == 12)
-			return "[" + suit + "Q" + "]";
-		if(value == 13)
-			return "[" + suit + "K" + "]";
-
-		return "[" + suit+value + "]";
+		switch(value)
+		{
+			case 1:
+				return "[" + suit + "A" + "]";
+			case 11:
+				return "[" + suit + "J" + "]";
+			case 12:
+				return "[" + suit + "Q" + "]";
+			case 13:
+				return "[" + suit + "K" + "]";
+			default:
+				return "[" + suit + value + "]";
+		}
 	}
-
-
-
 
 }
 

@@ -24,17 +24,10 @@ public class Hand
 	}
 
 	//Displays Cards for the Player
-	public void display(boolean activeHand)
+	public void display()
 	{
-		if(activeHand)
-		{
-			System.out.println("Your Cards: (This is the Current Hand)");
-		}
-		else
-		{
 
-			System.out.println("Your Cards:");
-		}
+		System.out.println("Your Cards:");
 
 		for (Card card : hand)
 		{
@@ -50,7 +43,7 @@ public class Hand
 	{
 		addCard(card);
 		System.out.println("Your Total: " + getSum());
-		display(true);
+		display();
 	}
 
 	public boolean canSplit()
@@ -121,9 +114,15 @@ public class Hand
 
 
 
-	public int getHandSize()
+	public int size()
 	{
 		return hand.size();
+	}
+
+
+	public Card get(int index)
+	{
+		return hand.get(index);
 	}
 
 
@@ -175,6 +174,7 @@ public class Hand
 	return (aceCount > 0 && sum + 10 <= 21);
 	}
 
+
 	//check if BlackJack
 	public boolean hasBlackJack()
 	{
@@ -194,7 +194,11 @@ public class Hand
 		hand.clear();
 	}
 
-
+	//This getter is used for loops because for each loops don't work
+	public ArrayList<Card> getCards()
+	{
+		return hand; //hand is basically a ArrayList of cards
+	}
 
 
 }
